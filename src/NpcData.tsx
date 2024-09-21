@@ -26,8 +26,17 @@ function renderAbility(abilityBase: number) {
   return `${ability} [${modifier <= 0 ? modifier : `+${modifier}`}]`;
 }
 
+export interface CustomNpc {
+  blood: {
+    color: string;
+    blessing: string;
+  },
+  class: string;
+  god: string;
+}
+
 interface IProps {
-  npc: Npc | null;
+  npc: Npc & CustomNpc | null;
 }
 
 export default class NpcData extends Component<IProps> {
@@ -67,6 +76,10 @@ export default class NpcData extends Component<IProps> {
         </div>
       ) : null;
 
+    const religion = npc.religion.description.includes("worships")
+      ? npc.religion.description.substring(0, npc.religion.description.indexOf("worships") + 9) + npc.god
+      : npc.religion.description;
+
     return (
       <div className="npc-data" id="downloadData">
         <Row>
@@ -77,7 +90,7 @@ export default class NpcData extends Component<IProps> {
                 <p hidden>#</p>
                 <p>
                   {npc.description.name} is a {npc.description.age + " "}
-                  year old {npc.description.gender} {npc.description.race + " "}
+                  year old {npc.description.gender} {npc.description.race.replace("half-orc", "orc") + " "}
                   {npc.description.occupation}.
                 </p>
                 <p hidden>#</p>
@@ -110,7 +123,7 @@ export default class NpcData extends Component<IProps> {
               <Card.Header>Personality Traits</Card.Header>
               <Card.Body data-test="npc-personality">
                 <p hidden>#</p>
-                <p>{npc.religion.description}</p>
+                <p>{religion}</p>
                 <p hidden>#</p>
                 <p>{npc.ptraits.traits1}</p>
                 <p hidden>#</p>
@@ -176,58 +189,12 @@ export default class NpcData extends Component<IProps> {
           </Col>
           <Col md={12} lg={12} xl={4} className="col-print-4">
             <Card className="second-row-height">
-              <Card.Header>Alignment Tendencies</Card.Header>
-              <Card.Body data-test="npc-alignment">
+              <Card.Header>Class Description</Card.Header>
+              <Card.Body data-test="npc-class">
                 <p hidden>#</p>
-                <table className="alignment-table">
-                  <tbody>
-                    <tr>
-                      <td className="width-thin">
-                        <b>Good</b>
-                      </td>
-                      <td hidden>: </td>
-                      <td className="alignment-number">{Math.max(0, npc.alignment.good)}</td>
-                      <td hidden> </td>
-                      <td className="width-thin">
-                        <b>Lawful</b>
-                      </td>
-                      <td hidden>: </td>
-                      <td className="alignment-number">{Math.max(0, npc.alignment.lawful)}</td>
-                    </tr>
-                    <tr hidden>
-                      <td>#</td>
-                    </tr>
-                    <tr>
-                      <td className="width-thin">
-                        <b>Neutral</b>
-                      </td>
-                      <td hidden>: </td>
-                      <td className="alignment-number">{Math.max(0, npc.alignment.moralneutral)}</td>
-                      <td hidden> </td>
-                      <td className="width-thin">
-                        <b>Neutral</b>
-                      </td>
-                      <td hidden>: </td>
-                      <td className="alignment-number">{Math.max(0, npc.alignment.ethicalneutral)}</td>
-                    </tr>
-                    <tr hidden>
-                      <td>#</td>
-                    </tr>
-                    <tr>
-                      <td className="width-thin">
-                        <b>Evil</b>
-                      </td>
-                      <td hidden>: </td>
-                      <td className="alignment-number">{Math.max(0, npc.alignment.evil)}</td>
-                      <td hidden> </td>
-                      <td className="width-thin">
-                        <b>Chaotic</b>
-                      </td>
-                      <td hidden>: </td>
-                      <td className="alignment-number">{Math.max(0, npc.alignment.chaotic)}</td>
-                    </tr>
-                  </tbody>
-                </table>
+                <p><b>Class:</b> {npc.class}</p>
+                <p><b>Blood:</b> {npc.blood.color}</p>
+                <p><b>Blessing:</b> {npc.blood.blessing}</p>
               </Card.Body>
             </Card>
           </Col>
